@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.setFragmentResultListener
 import com.example.fragments.databinding.FragmentFirstBinding
 import com.example.fragments.databinding.FragmentSecondBinding
 import com.google.android.material.snackbar.Snackbar
@@ -15,36 +16,41 @@ import kotlin.random.Random
 
 
 class SecondFragment : Fragment() {
-    private var _binding:FragmentSecondBinding? = null
+    private var _binding: FragmentSecondBinding? = null
     private val binding get() = _binding!!
-    private lateinit var myView: View
-    private var lista = mutableMapOf<String, String>()
+    private var lista = mutableMapOf<String, Double>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSecondBinding.inflate(layoutInflater)
+        _binding = FragmentSecondBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
-        val btnAdd = myView.findViewById<Button>(R.id.ivDado1)
-
-        btnAdd.setOnClickListener { addItem() }
-
-        FragmentSecondBinding.inflate(inflater, container, false)
-        return _binding!!.root
+        return binding.root
     }
-    fun addItem (){
-        if (binding.etArticulo.text.isNotEmpty() and binding.etPrecio.text.isNotEmpty()){
-            lista.put(binding.etArticulo.text.toString(), binding.etPrecio.text.toString())
-            binding.etArticulo.text.clear()
-            binding.etPrecio.text.clear()
-             msj(lista.toString())
-        } else {
-            msj("Todos los campos son obligatorios")
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.btnAdd.setOnClickListener {
+            if(binding.etArticulo.text.isNotEmpty() and binding.etPrecio.text.isNotEmpty()){
+                lista.put(
+                    binding.etArticulo.text.toString(),
+                    binding.etPrecio.text.toString().toDouble()
+                )
+                binding.etArticulo.text.clear()
+                binding.etPrecio.text.clear()
+            } else {
+                Snackbar.make(view, "Todos los campos son obligatorios", Snackbar.LENGTH_LONG)
+                    .show()
+            }
         }
-    }
-    fun msj (str:String){
-        Snackbar.make(binding.root, str, Snackbar.LENGTH_LONG).show()
+
+
     }
 
 }
