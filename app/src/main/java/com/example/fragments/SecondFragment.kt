@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import com.example.fragments.databinding.FragmentFirstBinding
 import com.example.fragments.databinding.FragmentSecondBinding
@@ -18,7 +20,7 @@ import kotlin.random.Random
 class SecondFragment : Fragment() {
     private var _binding: FragmentSecondBinding? = null
     private val binding get() = _binding!!
-    private var lista = mutableMapOf<String, Double>()
+    private var bundle = bundleOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +40,7 @@ class SecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnAdd.setOnClickListener {
             if(binding.etArticulo.text.isNotEmpty() and binding.etPrecio.text.isNotEmpty()){
-                lista.put(
+                bundle.putDouble(
                     binding.etArticulo.text.toString(),
                     binding.etPrecio.text.toString().toDouble()
                 )
@@ -49,8 +51,22 @@ class SecondFragment : Fragment() {
                     .show()
             }
         }
+        binding.btnEnviar.setOnClickListener {
+            val datos = Bundle()
+            datos.putString("ID_ARTICULO", binding.etArticulo.text.toString())
+            datos.putString("ID_PRECIO", binding.etPrecio.text.toString())
+            setFragmentResult("paquete1",bundle )
 
-
+            val tf = ResultFragment()
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.second_frg,tf)
+                .addToBackStack(null)
+                .commit()
+        }
     }
+
+
+
 
 }
